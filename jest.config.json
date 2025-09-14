@@ -2,5 +2,5 @@
   "testEnvironment": "node",
   "globalSetup": "<rootDir>/src/test/globalSetup.js",
   "globalTeardown": "<rootDir>/src/test/globalTeardown.js",
-  "setupFileAfterEnv": ["<rootDir>/src/test/setupFileAfterEnv.js"]
+  "setupFilesAfterEnv": ["<rootDir>/src/test/setupFilesAfterEnv.js"]
 }
