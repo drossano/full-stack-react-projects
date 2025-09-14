@@ -7,7 +7,28 @@ const postSchema = new Schema(
     contents: String,
     tags: [String],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const Post = mongoose.model("post", postSchema);
+
+const samplePosts = [
+  {
+    title: "Learning Redux",
+    author: "Daniel Bugl",
+    tags: ["redux"],
+  },
+  {
+    title: "Learn React Hooks",
+    author: "Daniel Bugl",
+    tags: ["react"],
+  },
+  {
+    title: "Full-Stack React Projects",
+    author: "Daniel Bugl",
+    tags: ["react", "nodejs"],
+  },
+  {
+    title: "Guide to TypeScript",
+  },
+];
