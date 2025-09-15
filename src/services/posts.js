@@ -29,7 +29,7 @@ export async function getPostById(postId) {
 }
 
 export async function updatePost(postId, { title, author, contents, tags }) {
-  return await Post.findByIdAndUpdate(
+  return await Post.findOneAndUpdate(
     { _id: postId },
     { $set: { title, author, contents, tags } },
     { new: true }

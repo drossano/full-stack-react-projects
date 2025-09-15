@@ -49,12 +49,12 @@ export function postsRoutes(app) {
       return res.status(500).end();
     }
   });
-  app.patch("/api/v1/posts:id", async (req, res) => {
+  app.patch("/api/v1/posts/:id", async (req, res) => {
     try {
       const post = await updatePost(req.params.id, req.body);
       return res.json(post);
-    } catch (err) {
-      console.error("error updating post", err);
+    } catch (error) {
+      console.error("error updating post", error);
       return res.status(500).end();
     }
   });
