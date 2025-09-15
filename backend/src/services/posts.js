@@ -7,7 +7,7 @@ export async function createPost({ title, author, contents, tags }) {
 
 export async function listPosts(
   query = {},
-  { sortBy = "createdAt", sortOrder = "descending" } = {}
+  { sortBy = "createdAt", sortOrder = "descending" } = {},
 ) {
   return await Post.find(query).sort({ [sortBy]: sortOrder });
 }
@@ -32,7 +32,7 @@ export async function updatePost(postId, { title, author, contents, tags }) {
   return await Post.findOneAndUpdate(
     { _id: postId },
     { $set: { title, author, contents, tags } },
-    { new: true }
+    { new: true },
   );
 }
 

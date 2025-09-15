@@ -88,10 +88,10 @@ describe("listing posts", () => {
   test("should return posts sorted by creation date descending by default", async () => {
     const posts = await listAllPosts();
     const sortedSamplePosts = createdSamplePosts.sort(
-      (a, b) => b.createdAt - a.createdAt
+      (a, b) => b.createdAt - a.createdAt,
     );
     expect(posts.map((post) => post.createdAt)).toEqual(
-      sortedSamplePosts.map((post) => post.createdAt)
+      sortedSamplePosts.map((post) => post.createdAt),
     );
   });
   test("should take into account provided sorting options", async () => {
@@ -100,10 +100,10 @@ describe("listing posts", () => {
       sortOrder: "ascending",
     });
     const sortedSamplePosts = createdSamplePosts.sort(
-      (a, b) => a.updatedAt - b.updatedAt
+      (a, b) => a.updatedAt - b.updatedAt,
     );
     expect(posts.map((post) => post.updatedAt)).toEqual(
-      sortedSamplePosts.map((post) => post.updatedAt)
+      sortedSamplePosts.map((post) => post.updatedAt),
     );
   });
   test("should be able to filter posts by author", async () => {
@@ -151,7 +151,7 @@ describe("updating posts", () => {
 
     const updatedPost = await Post.findById(createdSamplePosts[0]._id);
     expect(updatedPost.updatedAt.getTime()).toBeGreaterThan(
-      createdSamplePosts[0].updatedAt.getTime()
+      createdSamplePosts[0].updatedAt.getTime(),
     );
   });
   test("should fail if id doesnt exist", async () => {
