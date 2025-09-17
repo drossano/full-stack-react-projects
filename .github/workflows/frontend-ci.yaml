@@ -20,7 +20,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: Install dependencies
-        run: npm Install
+        run: npm install
       - name: Run linter on Frontend
         run: npm run lint
       - name: Build Frontend
