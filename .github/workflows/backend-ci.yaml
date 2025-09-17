@@ -14,7 +14,7 @@ jobs:
         node-version: [16.x, 18.x, 20.x]
     defaults:
       run:
-        working-directory: ./Backend
+        working-directory: ./backend
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js {{ matrix.node-version }}
