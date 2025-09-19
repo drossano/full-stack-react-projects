@@ -26,7 +26,7 @@ describe('creating posts', () => {
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
 
     const foundPost = await Post.findById(createdPost._id)
-    expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
+    expect(foundPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
     expect(foundPost).toEqual(expect.objectContaining(post))
     expect(foundPost.createdAt).toBeInstanceOf(Date)
     expect(foundPost.updatedAt).toBeInstanceOf(Date)
@@ -42,6 +42,19 @@ describe('creating posts', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
       expect(err.message).toContain('`title` is required')
+    }
+  })
+  test('should fail without author', async () => {
+    const post = {
+      title: 'Anonymous Post',
+      contents: 'Post with no author',
+      tags: ['empty'],
+    }
+    try {
+      await createPost(post)
+    } catch (err) {
+      expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
+      expect(err.message).toContain('`author` is required')
     }
   })
   test('with minimal parameters should succeed', async () => {
