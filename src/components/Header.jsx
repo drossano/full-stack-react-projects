@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../contexts/AuthContext.jsx";
+import { User } from "./User.jsx";
 
 export function Header() {
   const [token, setToken] = useAuth();
@@ -8,7 +9,7 @@ export function Header() {
     const { sub } = jwtDecode(token);
     return (
       <div>
-        Logged in as <b>{sub}</b>
+        Logged in as <User id={sub} />
         <br />
         <button onClick={() => setToken(null)}>Logout</button>
       </div>

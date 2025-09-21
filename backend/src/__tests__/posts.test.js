@@ -142,7 +142,7 @@ describe('listing posts', () => {
     )
   })
   test('should be able to filter posts by author', async () => {
-    const posts = await listPostsByAuthor(sampleUser._id)
+    const posts = await listPostsByAuthor('hello')
     expect(posts.length).toBe(3)
   })
   test('should able to filter posts by tag', async () => {

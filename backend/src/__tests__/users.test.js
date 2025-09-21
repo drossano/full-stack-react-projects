@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { describe, expect, test } from '@jest/globals'
 import { User } from '../db/models/user.js'
-import { createUser, loginUser } from '../services/users.js'
+import { createUser, getUserInfoById, loginUser } from '../services/users.js'
 
 describe('creating users', () => {
   test('should succeed with all params', async () => {
@@ -88,5 +88,14 @@ describe('logging in', () => {
     } catch (err) {
       expect(err.message).toContain('username')
     }
+  })
+})
+
+describe('fetching usernames', () => {
+  test('should return username when given a valid username ', async () => {
+    const user = { username: 'findingUsername', password: 'testPassword' }
+    const createdUser = await createUser(user)
+    const foundUser = await getUserInfoById(createdUser._id)
+    expect(foundUser.username).toBe('findingUsername')
   })
 })
