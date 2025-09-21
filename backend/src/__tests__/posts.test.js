@@ -13,6 +13,7 @@ import { Post } from '../db/models/post.js'
 import { User } from '../db/models/user.js'
 
 const sampleUser = new User({ username: 'hello', password: 'world' })
+const sampleUser2 = new User({ username: 'user2', password: 'password2' })
 
 describe('creating posts', () => {
   test('with all parameters should succeed', async () => {
@@ -81,7 +82,6 @@ describe('creating posts', () => {
   })
 })
 
-const sampleUser2 = new User({ username: 'user2', password: 'password2' })
 const samplePosts = [
   {
     title: 'Learning Redux',
@@ -164,7 +164,7 @@ describe('getting a post', () => {
 
 describe('updating posts', () => {
   test('should update the specified property', async () => {
-    await updatePost(createdSamplePosts[0]._id, {
+    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -172,7 +172,7 @@ describe('updating posts', () => {
     expect(updatedPost.contents).toEqual('Test contents')
   })
   test('should not update other props', async () => {
-    await updatePost(createdSamplePosts[0]._id, {
+    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -180,7 +180,7 @@ describe('updating posts', () => {
     expect(updatedPost.title).toEqual('Learning Redux')
   })
   test('should update the updatedAt timestamp', async () => {
-    await updatePost(createdSamplePosts[0]._id, {
+    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -189,25 +189,78 @@ describe('updating posts', () => {
       createdSamplePosts[0].updatedAt.getTime(),
     )
   })
-  test('should fail if id doesnt exist', async () => {
+  test('should fail if user id doesnt exist', async () => {
     ;async () => {
-      const post = await updatePost('000000000000000000000000', {
-        contents: 'Test contents',
-      })
+      const post = await updatePost(
+        '000000000000000000000000',
+        '000000000000000000000000',
+        {
+          contents: 'Test contents',
+        },
+      )
       expect(post).toEqual(null)
     }
+  })
+  test('should fail if user & post ids dont exist', async () => {
+    ;async () => {
+      const post = await updatePost(
+        '000000000000000000000000',
+        createdSamplePosts[0]._id,
+        {
+          contents: 'Test contents',
+        },
+      )
+      expect(post).toEqual(null)
+    }
+  })
+  test('should fail if post id doesnt exist', async () => {
+    ;async () => {
+      const post = await updatePost(
+        sampleUser._id,
+        '000000000000000000000000',
+        {
+          contents: 'Test contents',
+        },
+      )
+      expect(post).toEqual(null)
+    }
+  })
+  test("shouldn't update if edited by a different user", async () => {
+    await updatePost(sampleUser2._id, createdSamplePosts[0]._id, {
+      contents: 'not my post',
+    })
+    const updatedPost = await Post.findById(createdSamplePosts[0]._id)
+    expect(updatedPost.contents).toEqual("Let's learn redux!")
   })
 })
 
 describe('deleting posts', () => {
-  test('should remove the post from thedatabase', async () => {
-    const result = await deletePost(createdSamplePosts[0]._id)
+  test('should remove the post from the database', async () => {
+    const result = await deletePost(sampleUser._id, createdSamplePosts[0]._id)
     expect(result.deletedCount).toEqual(1)
     const deletedPost = await Post.findById(createdSamplePosts[0]._id)
     expect(deletedPost).toEqual(null)
   })
-  test('should fail if the id does not exist', async () => {
-    const result = await deletePost('000000000000000000000000')
+  test('should fail if the user  doesnt not exist', async () => {
+    const result = await deletePost(
+      '000000000000000000000000',
+      createdSamplePosts[0]._id,
+    )
+    expect(result.deletedCount).toEqual(0)
+  })
+  test('should fail if the post ids doesnt not exist', async () => {
+    const result = await deletePost(sampleUser._id, '000000000000000000000000')
+    expect(result.deletedCount).toEqual(0)
+  })
+  test('should fail if the user and post ids dont not exist', async () => {
+    const result = await deletePost(
+      '000000000000000000000000',
+      '000000000000000000000000',
+    )
+    expect(result.deletedCount).toEqual(0)
+  })
+  test('should fail if deleted by different user does not exist', async () => {
+    const result = await deletePost(sampleUser2._id, createdSamplePosts[0]._id)
     expect(result.deletedCount).toEqual(0)
   })
 })
