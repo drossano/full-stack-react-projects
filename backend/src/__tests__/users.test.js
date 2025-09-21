@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { describe, expect, test } from '@jest/globals'
 import { User } from '../db/models/user.js'
-import { createUser } from '../services/users.js'
+import { createUser, loginUser } from '../services/users.js'
 
 describe('creating users', () => {
   test('should succeed with all params', async () => {
@@ -39,11 +39,11 @@ describe('creating users', () => {
       await createUser(user1)
       await createUser(user2)
     } catch (err) {
-      await expect(err).toBeInstanceOf(mongoose.mongo.MongoServerError)
+      expect(err).toBeInstanceOf(mongoose.mongo.MongoServerError)
       expect(err.message).toContain('duplicate key')
     }
   })
-  test('should suceed with different usernames but duplecate passwords', async () => {
+  test('should succeed with different usernames but duplicate passwords', async () => {
     const user1 = { username: 'testUsername1', password: 'testPassword' }
     const user2 = { username: 'testUsername2', password: 'testPassword' }
 
@@ -58,5 +58,35 @@ describe('creating users', () => {
 
     const foundUser2 = await User.findById(createdUser2._id)
     expect(foundUser2._id).toBeInstanceOf(mongoose.Types.ObjectId)
+  })
+})
+
+describe('logging in', () => {
+  const user = { username: 'testLogin', password: 'testPassword' }
+  createUser(user)
+  test('should succeed with valid credentials', async () => {
+    const login = await loginUser(user)
+    expect(login).not.toBeNull()
+  })
+  test('should fail with incorrect username', async () => {
+    try {
+      await loginUser({ username: 'wrongUsername', password: 'testPassword' })
+    } catch (err) {
+      expect(err.message).toContain('username')
+    }
+  })
+  test('should fail with incorrect password', async () => {
+    try {
+      await loginUser({ username: 'testLogin', password: '123' })
+    } catch (err) {
+      expect(err.message).toContain('password')
+    }
+  })
+  test('should warn that username is invalid with incorrect username and password', async () => {
+    try {
+      await loginUser({ username: 'wrongUsername', password: '123' })
+    } catch (err) {
+      expect(err.message).toContain('username')
+    }
   })
 })
