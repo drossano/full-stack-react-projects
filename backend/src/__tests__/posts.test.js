@@ -22,7 +22,7 @@ describe('creating posts', () => {
       contents: 'This post is stored in a MongoDB database using Mongoose.',
       tags: ['mongoose', 'mongodb'],
     }
-    const createdPost = await createPost(post)
+    const createdPost = await createPost(sampleUser._id, post)
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
 
     const foundPost = await Post.findById(createdPost._id)
@@ -38,7 +38,7 @@ describe('creating posts', () => {
       tags: ['empty'],
     }
     try {
-      await createPost(post)
+      await createPost(sampleUser._id, post)
     } catch (err) {
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
       expect(err.message).toContain('`title` is required')
@@ -51,7 +51,7 @@ describe('creating posts', () => {
       tags: ['empty'],
     }
     try {
-      await createPost(post)
+      await createPost(sampleUser._id, post)
     } catch (err) {
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
       expect(err.message).toContain('`author` is required')
@@ -62,8 +62,22 @@ describe('creating posts', () => {
       title: 'Only a title',
       author: sampleUser._id,
     }
-    const createdPost = await createPost(post)
+    const createdPost = await createPost(sampleUser._id, post)
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
+  })
+  test('should fail without user id', async () => {
+    const post = {
+      title: 'Anonymous Post',
+      contents: 'Post with no author',
+      tags: ['empty'],
+    }
+
+    try {
+      await createPost(post)
+    } catch (err) {
+      expect(err).toBeInstanceOf(TypeError)
+      expect(err.message).toContain('Cannot destructure property')
+    }
   })
 })
 
