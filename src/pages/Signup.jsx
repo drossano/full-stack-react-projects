@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { signup } from "../api/users.js";
 
 export function Signup() {
@@ -20,6 +20,9 @@ export function Signup() {
   };
   return (
     <form onSubmit={handleSubmit}>
+      <Link to="/">Back to main page</Link>
+      <hr />
+      <br />
       <div>
         <label htmlFor="create-username">Username:</label>
         <input
