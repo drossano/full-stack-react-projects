@@ -1,29 +1,63 @@
 import mongoose from 'mongoose'
-import { describe, expect, test, beforeEach } from '@jest/globals'
+import { describe, expect, test, beforeEach, beforeAll } from '@jest/globals'
 import {
   createPost,
   listAllPosts,
-  // listPostsByAuthor,
+  listPostsByAuthor,
   listPostsByTag,
   getPostById,
   updatePost,
   deletePost,
 } from '../services/posts.js'
 import { Post } from '../db/models/post.js'
-import { User } from '../db/models/user.js'
+import { createUser } from '../services/users.js'
 
-const sampleUser = new User({ username: 'hello', password: 'world' })
-const sampleUser2 = new User({ username: 'user2', password: 'password2' })
+let samplePosts = []
+let testUser = null
+let testUser2 = null
+beforeAll(async () => {
+  testUser = await createUser({ username: 'hello', password: 'world' })
+  testUser2 = await createUser({ username: 'test', password: 'user2' })
+  samplePosts = [
+    {
+      title: 'Learning Redux',
+      contents: "Let's learn redux!",
+      author: testUser._id,
+      tags: ['redux'],
+    },
+    {
+      title: 'Learn React Hooks',
+      author: testUser._id,
+      tags: ['react'],
+    },
+    {
+      title: 'Full-Stack React Projects',
+      author: testUser._id,
+      tags: ['react', 'nodejs'],
+    },
+  ]
+})
+
+let createdSamplePosts = []
+beforeEach(async () => {
+  await Post.deleteMany({})
+  createdSamplePosts = []
+  for (const post of samplePosts) {
+    const createdPost = new Post(post)
+
+    createdSamplePosts.push(await createdPost.save())
+  }
+})
 
 describe('creating posts', () => {
   test('with all parameters should succeed', async () => {
     const post = {
       title: 'Hello Mongoose!',
-      author: sampleUser._id,
+      author: testUser._id,
       contents: 'This post is stored in a MongoDB database using Mongoose.',
       tags: ['mongoose', 'mongodb'],
     }
-    const createdPost = await createPost(sampleUser._id, post)
+    const createdPost = await createPost(testUser._id, post)
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
 
     const foundPost = await Post.findById(createdPost._id)
@@ -34,12 +68,12 @@ describe('creating posts', () => {
   })
   test('without title should fail', async () => {
     const post = {
-      author: sampleUser._id,
+      author: testUser._id,
       contents: 'Post with no title',
       tags: ['empty'],
     }
     try {
-      await createPost(sampleUser._id, post)
+      await createPost(testUser._id, post)
     } catch (err) {
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
       expect(err.message).toContain('`title` is required')
@@ -52,7 +86,7 @@ describe('creating posts', () => {
       tags: ['empty'],
     }
     try {
-      await createPost(sampleUser._id, post)
+      await createPost(testUser._id, post)
     } catch (err) {
       expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
       expect(err.message).toContain('`author` is required')
@@ -61,9 +95,9 @@ describe('creating posts', () => {
   test('with minimal parameters should succeed', async () => {
     const post = {
       title: 'Only a title',
-      author: sampleUser._id,
+      author: testUser._id,
     }
-    const createdPost = await createPost(sampleUser._id, post)
+    const createdPost = await createPost(testUser._id, post)
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
   })
   test('should fail without user id', async () => {
@@ -80,40 +114,6 @@ describe('creating posts', () => {
       expect(err.message).toContain('Cannot destructure property')
     }
   })
-})
-
-const samplePosts = [
-  {
-    title: 'Learning Redux',
-    contents: "Let's learn redux!",
-    author: sampleUser._id,
-    tags: ['redux'],
-  },
-  {
-    title: 'Learn React Hooks',
-    author: sampleUser._id,
-    tags: ['react'],
-  },
-  {
-    title: 'Full-Stack React Projects',
-    author: sampleUser._id,
-    tags: ['react', 'nodejs'],
-  },
-  {
-    title: 'Guide to TypeScript',
-    author: sampleUser2._id,
-  },
-]
-
-let createdSamplePosts = []
-beforeEach(async () => {
-  await Post.deleteMany({})
-  createdSamplePosts = []
-  for (const post of samplePosts) {
-    const createdPost = new Post(post)
-
-    createdSamplePosts.push(await createdPost.save())
-  }
 })
 
 describe('listing posts', () => {
@@ -144,10 +144,10 @@ describe('listing posts', () => {
     )
   })
   // works on website but can't get test to work
-  /*   test('should be able to filter posts by author', async () => {
-    const posts = await listPostsByAuthor('hello')
+  test('should be able to filter posts by author', async () => {
+    const posts = await listPostsByAuthor(testUser.username)
     expect(posts.length).toBe(3)
-  }) */
+  })
   test('should able to filter posts by tag', async () => {
     const posts = await listPostsByTag('nodejs')
     expect(posts.length).toBe(1)
@@ -167,7 +167,7 @@ describe('getting a post', () => {
 
 describe('updating posts', () => {
   test('should update the specified property', async () => {
-    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
+    await updatePost(testUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -175,7 +175,7 @@ describe('updating posts', () => {
     expect(updatedPost.contents).toEqual('Test contents')
   })
   test('should not update other props', async () => {
-    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
+    await updatePost(testUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -183,7 +183,7 @@ describe('updating posts', () => {
     expect(updatedPost.title).toEqual('Learning Redux')
   })
   test('should update the updatedAt timestamp', async () => {
-    await updatePost(sampleUser._id, createdSamplePosts[0]._id, {
+    await updatePost(testUser._id, createdSamplePosts[0]._id, {
       contents: 'Test contents',
     })
 
@@ -218,18 +218,14 @@ describe('updating posts', () => {
   })
   test('should fail if post id doesnt exist', async () => {
     ;async () => {
-      const post = await updatePost(
-        sampleUser._id,
-        '000000000000000000000000',
-        {
-          contents: 'Test contents',
-        },
-      )
+      const post = await updatePost(testUser._id, '000000000000000000000000', {
+        contents: 'Test contents',
+      })
       expect(post).toEqual(null)
     }
   })
   test("shouldn't update if edited by a different user", async () => {
-    await updatePost(sampleUser2._id, createdSamplePosts[0]._id, {
+    await updatePost(testUser2._id, createdSamplePosts[0]._id, {
       contents: 'not my post',
     })
     const updatedPost = await Post.findById(createdSamplePosts[0]._id)
@@ -239,7 +235,7 @@ describe('updating posts', () => {
 
 describe('deleting posts', () => {
   test('should remove the post from the database', async () => {
-    const result = await deletePost(sampleUser._id, createdSamplePosts[0]._id)
+    const result = await deletePost(testUser._id, createdSamplePosts[0]._id)
     expect(result.deletedCount).toEqual(1)
     const deletedPost = await Post.findById(createdSamplePosts[0]._id)
     expect(deletedPost).toEqual(null)
@@ -252,7 +248,7 @@ describe('deleting posts', () => {
     expect(result.deletedCount).toEqual(0)
   })
   test('should fail if the post ids doesnt not exist', async () => {
-    const result = await deletePost(sampleUser._id, '000000000000000000000000')
+    const result = await deletePost(testUser._id, '000000000000000000000000')
     expect(result.deletedCount).toEqual(0)
   })
   test('should fail if the user and post ids dont not exist', async () => {
@@ -263,7 +259,7 @@ describe('deleting posts', () => {
     expect(result.deletedCount).toEqual(0)
   })
   test('should fail if deleted by different user does not exist', async () => {
-    const result = await deletePost(sampleUser2._id, createdSamplePosts[0]._id)
+    const result = await deletePost(testUser2._id, createdSamplePosts[0]._id)
     expect(result.deletedCount).toEqual(0)
   })
 })
