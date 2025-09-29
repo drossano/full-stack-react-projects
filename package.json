@@ -10,10 +10,13 @@
     "build:server": "vite build --outDir dist/server --ssr src/entry-server.jsx",
     "lint": "eslint src",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start":"cross-env NODE_ENV=production node server"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.12.2",
+    "compression": "^1.7.4",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jwt-decode": "^4.0.0",

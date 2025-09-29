@@ -2,7 +2,7 @@ export function createFetchRequest(req) {
   const origin = `${req.protocol}://${req.get("host")}`;
   const url = new URL(req.originalUrl || req.url, origin);
   const controller = new AbortController();
-  req.on("close", () => controller.abort);
+  req.on("close", () => controller.abort());
 
   const headers = new Headers();
   for (const [key, values] of Object.entries(req.headers)) {

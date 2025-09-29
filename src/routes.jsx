@@ -1,13 +1,13 @@
 import { useLoaderData } from "react-router-dom";
-import { Blog } from "./pages/Blog.jsx";
-import { Signup } from "./pages/Signup.jsx";
-import { Login } from "./pages/Login.jsx";
-import { getPosts } from "./api/posts.js";
 import {
   QueryClient,
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
+import { Blog } from "./pages/Blog.jsx";
+import { Signup } from "./pages/Signup.jsx";
+import { Login } from "./pages/Login.jsx";
+import { getPosts } from "./api/posts.js";
 import { getUserInfo } from "./api/users.js";
 
 export const routes = [
