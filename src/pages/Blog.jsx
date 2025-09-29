@@ -6,15 +6,17 @@ import { PostSorting } from "../components/PostSorting.jsx";
 import { getPosts } from "../api/posts.js";
 import { useState } from "react";
 import { Header } from "../components/Header.jsx";
+import PropTypes from "prop-types";
 import "./Blog.css";
 
-export function Blog() {
+export function Blog({ initialData }) {
   const [author, setAuthor] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("descending");
   const postsQuery = useQuery({
     queryKey: ["posts", { author, sortBy, sortOrder }],
     queryFn: () => getPosts({ author, sortBy, sortOrder }),
+    initialData,
   });
   const posts = postsQuery.data ?? [];
   return (
@@ -45,3 +47,7 @@ export function Blog() {
     </div>
   );
 }
+
+Blog.propTypes = {
+  initialData: PropTypes.shape(PostList.propTypes.posts),
+};
