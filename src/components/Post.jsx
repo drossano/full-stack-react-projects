@@ -1,14 +1,21 @@
 import PropTypes from "prop-types";
 import { User } from "./User.jsx";
-
-export function Post({ title, contents, author }) {
+import { Link } from "react-router-dom";
+export function Post({ title, contents, author, _id, fullPost = false }) {
   return (
     <article>
-      <h3>{title}</h3>
-      <div>{contents}</div>
+      {fullPost ? (
+        <h3>{title}</h3>
+      ) : (
+        <Link to={`/posts/${_id}`}>
+          <h3>{title}</h3>
+        </Link>
+      )}
+      {fullPost && <div>{contents}</div>}
+
       {author && (
         <em>
-          <br />
+          {fullPost && <br />}
           Written by <User id={author} />
         </em>
       )}
@@ -20,4 +27,6 @@ Post.propTypes = {
   title: PropTypes.string.isRequired,
   contents: PropTypes.string,
   author: PropTypes.string,
+  _id: PropTypes.string.isRequired,
+  fullPost: PropTypes.bool,
 };
