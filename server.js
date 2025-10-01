@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
+import { generateSitemap } from "./generateSitemap.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -19,6 +20,13 @@ async function createProdServer() {
     ),
   );
   app.use("*", async (req, res, next) => {
+    if (req.originalUrl === "/sitemap.xml") {
+      const sitemap = await generateSitemap();
+      return res
+        .status(200)
+        .set({ "Content-Type": "application/xml" })
+        .end(sitemap);
+    }
     try {
       let template = fs.readFileSync(
         path.resolve(__dirname, "dist/client/index.html"),
@@ -45,6 +53,13 @@ async function createDevServer() {
   });
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
+    if (req.originalUrl === "/sitemap.xml") {
+      const sitemap = await generateSitemap();
+      return res
+        .status(200)
+        .set({ "Content-Type": "application/xml" })
+        .end(sitemap);
+    }
     try {
       const templateHtml = fs.readFileSync(
         path.resolve(__dirname, "index.html"),
