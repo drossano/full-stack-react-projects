@@ -6,6 +6,7 @@ import { PostSorting } from "../components/PostSorting.jsx";
 import { getPosts } from "../api/posts.js";
 import { useState } from "react";
 import { Header } from "../components/Header.jsx";
+import { Helmet } from "react-helmet-async";
 import "./Blog.css";
 
 export function Blog() {
@@ -19,6 +20,9 @@ export function Blog() {
   const posts = postsQuery.data ?? [];
   return (
     <div style={{ padding: 8 }}>
+      <Helmet>
+        <title>Full-Stack React Blog</title>
+      </Helmet>
       <Header />
       <br />
       <hr />
