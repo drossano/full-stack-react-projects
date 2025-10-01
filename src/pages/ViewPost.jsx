@@ -6,6 +6,15 @@ import { Post } from "../components/Post.jsx";
 import { getPostById } from "../api/posts.js";
 import { Helmet } from "react-helmet-async";
 
+function truncate(str, max = 160) {
+  if (!str) return str;
+  if (str.length > max) {
+    return str.slice(0, max - 3) + "...";
+  } else {
+    return str;
+  }
+}
+
 export function ViewPost({ postId }) {
   const postQuery = useQuery({
     queryKey: ["post", postId],
@@ -18,6 +27,7 @@ export function ViewPost({ postId }) {
       {post && (
         <Helmet>
           <title>{post.title} | Full-Stack React Blog</title>
+          <meta name="description" content={truncate(post.contents)} />
         </Helmet>
       )}
       <Header />
