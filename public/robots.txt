@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /npm
+Sitemap: https://blog-frontend-612943510372.us-central1.run.app/gsitemap.xml
