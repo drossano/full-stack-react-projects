@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { postTrackEvent } from "../api/events.js";
 import { Header } from "../components/Header.jsx";
 import { Post } from "../components/Post.jsx";
 import { getPostById } from "../api/posts.js";
@@ -28,6 +30,21 @@ export function ViewPost({ postId }) {
     enabled: Boolean(post?.author),
   });
   const userInfo = userinfoQuery.data ?? {};
+  const [session, setSession] = useState();
+  const trackEventMutation = useMutation({
+    mutationFn: (action) => postTrackEvent({ postId, action, session }),
+    onSuccess: (data) => setSession(data?.session),
+  });
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      trackEventMutation.mutate("startView");
+      timeout = null;
+    }, 1000);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      else trackEventMutation.mutate("endView");
+    };
+  }, []);
 
   return (
     <div style={{ padding: 8 }}>
