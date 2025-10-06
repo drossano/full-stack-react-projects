@@ -8,6 +8,7 @@ import { Post } from "../components/Post.jsx";
 import { getPostById } from "../api/posts.js";
 import { getUserInfo } from "../api/users.js";
 import { Helmet } from "react-helmet-async";
+import { PostStats } from "../components/PostStats.jsx";
 
 function truncate(str, max = 160) {
   if (!str) return str;
@@ -71,7 +72,15 @@ export function ViewPost({ postId }) {
       <Link to="/">Back to main page</Link>
       <br />
       <hr />
-      {post ? <Post {...post} fullPost /> : `Port with id ${postId} not found.`}
+      {post ? (
+        <div>
+          <Post {...post} fullPost />
+          <hr />
+          <PostStats postId={postId} />
+        </div>
+      ) : (
+        `Port with id ${postId} not found.`
+      )}
     </div>
   );
 }
