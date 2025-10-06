@@ -39,7 +39,7 @@ async function simulateEvents() {
           createdUsers[Math.floor(Math.random() * simulatedUsers)]
         return await createPost(randomUser._id, {
           title: `Test Post ${p}`,
-          constents: `This is a test post ${p}`,
+          contents: `This is a test post ${p}`,
         })
       }),
   )
