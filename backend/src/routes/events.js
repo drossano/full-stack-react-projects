@@ -7,7 +7,7 @@ import {
 import { getPostById } from '../services/posts.js'
 
 export function eventRoutes(app) {
-  app.post('api/v1/events', async (req, res) => {
+  app.post('/api/v1/events', async (req, res) => {
     try {
       const { postId, session, action } = req.body
       const post = await getPostById(postId)
@@ -19,7 +19,7 @@ export function eventRoutes(app) {
       return res.status(500).end()
     }
   })
-  app.get('api/v1/events/totalViews/:postId', async (req, res) => {
+  app.get('/api/v1/events/totalViews/:postId', async (req, res) => {
     try {
       const { postId } = req.params
       const post = await getPostById(postId)
@@ -31,7 +31,7 @@ export function eventRoutes(app) {
       return res.status(500).end()
     }
   })
-  app.get('api/v1/events/dailyViews/:postId', async (req, res) => {
+  app.get('/api/v1/events/dailyViews/:postId', async (req, res) => {
     try {
       const { postId } = req.params
       const post = await getPostById(postId)
@@ -43,7 +43,7 @@ export function eventRoutes(app) {
       return res.status(500).end()
     }
   })
-  app.get('api/v1/events/dailyDurations/:postId', async (req, res) => {
+  app.get('/api/v1/events/dailyDurations/:postId', async (req, res) => {
     try {
       const { postId } = req.params
       const post = await getPostById(postId)

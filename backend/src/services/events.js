@@ -12,7 +12,7 @@ export async function trackEvent({
 
 export async function getTotalViews(postId) {
   return {
-    view: await Event.countDocuments({ post: postId, action: 'startView' }),
+    views: await Event.countDocuments({ post: postId, action: 'startView' }),
   }
 }
 
@@ -52,7 +52,7 @@ export async function getDailyDurations(postId) {
           $cond: [{ $eq: ['$action', 'startView'] }, '$date', undefined],
         },
         endDate: {
-          $cond: [{ $eq: ['$action', 'startView'] }, '$date', undefined],
+          $cond: [{ $eq: ['$action', 'endView'] }, '$date', undefined],
         },
       },
     },
