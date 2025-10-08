@@ -6,12 +6,16 @@ import {
 } from '../services/posts.js'
 
 export const querySchema = `#graphql
+input PostOptions {
+  sortBy: String
+  sortOrder: String
+}
 type Query {
   test: String
-  posts: [Post!]!
-  postsByAuthor(username: String!): [Post!]!
-  postsByTag(tag: String!): [Post!]!
-  postsById(id: ID!): Post
+  posts(options: PostOptions): [Post!]!
+  postsByAuthor(username: String!, options: PostOptions): [Post!]!
+  postsByTag(tag: String!, options: PostOptions): [Post!]!
+  postsById(id: ID!, options: PostOptions): Post
 }`
 
 export const queryResolver = {
@@ -19,14 +23,14 @@ export const queryResolver = {
     test: () => {
       return 'Hello world from GraphQL!'
     },
-    posts: async () => {
-      return await listAllPosts()
+    posts: async (parent, { options }) => {
+      return await listAllPosts(options)
     },
-    postsByAuthor: async (parent, { username }) => {
-      return await listPostsByAuthor(username)
+    postsByAuthor: async (parent, { username, options }) => {
+      return await listPostsByAuthor(username, options)
     },
-    postsByTag: async (parent, { tag }) => {
-      return await listPostsByTag(tag)
+    postsByTag: async (parent, { tag, options }) => {
+      return await listPostsByTag(tag, options)
     },
     postsById: async (parent, { id }) => {
       return await getPostById(id)
