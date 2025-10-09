@@ -3,7 +3,7 @@ import { User } from "./User.jsx";
 import { Link } from "react-router-dom";
 import slug from "slug";
 
-export function Post({ title, contents, author, id: id, fullPost = false }) {
+export function Post({ title, contents, author, id, fullPost = false }) {
   return (
     <article>
       {fullPost ? (
