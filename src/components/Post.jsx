@@ -18,7 +18,7 @@ export function Post({ title, contents, author, id, fullPost = false }) {
       {author && (
         <em>
           {fullPost && <br />}
-          Written by <User id={author} />
+          Written by <User {...author} />
         </em>
       )}
     </article>
@@ -28,7 +28,7 @@ export function Post({ title, contents, author, id, fullPost = false }) {
 Post.propTypes = {
   title: PropTypes.string.isRequired,
   contents: PropTypes.string,
-  author: PropTypes.string,
+  author: PropTypes.shape(User.propTypes),
   id: PropTypes.string.isRequired,
   fullPost: PropTypes.bool,
 };
