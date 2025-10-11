@@ -31,3 +31,12 @@ export const GET_POSTS_BY_AUTHOR = gql`
     }
   }
 `;
+
+export const CREATE_POST = gql`
+  mutation createPost($title: String!, $contents: String, $tags: [String!]) {
+    createPost(title: $title, contents: $contents, tags: $tags) {
+      id
+      title
+    }
+  }
+`;
