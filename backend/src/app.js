@@ -39,6 +39,7 @@ apolloServer.start().then(() =>
 app.get('/', (req, res) => {
   res.send('Hello from Express!')
 })
+
 const server = createServer(app)
 
 const io = new Server(server, {

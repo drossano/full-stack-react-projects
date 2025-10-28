@@ -10,7 +10,10 @@ const socket = io(import.meta.env.VITE_SOCKET_HOST);
 
 socket.on("connect", () => {
   console.log("connected to socket.io as", socket.id);
-  socket.emit("chat.message", "hello from client");
+  socket.emit(
+    "chat.message",
+    new URLSearchParams(window.location.search).get("mymsg"),
+  );
 });
 
 socket.on("connect_error", (err) => {
